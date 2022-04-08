@@ -30,7 +30,7 @@
     "url": "https://github.com/TheUnderScorer"
   },
   "engines": {
-    "node": ">=12.0"
+    "node": ">=14.0"
   },
   "keywords": [
     "DI",
@@ -43,7 +43,10 @@
     "url": "https://github.com/TheUnderScorer/mahobin/issues"
   },
   "homepage": "https://github.com/TheUnderScorer/mahobin#readme",
-  "dependencies": {},
+  "dependencies": {
+    "emittery": "0.10.2",
+    "nanoid": "^3.3.2"
+  },
   "devDependencies": {
     "@semantic-release/changelog": "6.0.1",
     "@semantic-release/git": "10.0.1",
