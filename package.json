@@ -16,6 +16,7 @@
     "semantic-release": "semantic-release",
     "test:watch": "jest --watch",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "typecheck": "tsc --noEmit"
   },
   "repository": {
