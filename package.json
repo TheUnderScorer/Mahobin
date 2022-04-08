@@ -1,5 +1,5 @@
 {
-  "name": "silio",
+  "name": "mahobin",
   "version": "0.0.0",
   "description": "Yet another DI library for javascript",
   "main": "./lib/src/index.js",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TheUnderScorer/silio.git"
+    "url": "git+https://github.com/TheUnderScorer/mahobin.git"
   },
   "license": "MIT",
   "author": {
@@ -39,9 +39,9 @@
     "javascript"
   ],
   "bugs": {
-    "url": "https://github.com/TheUnderScorer/silio/issues"
+    "url": "https://github.com/TheUnderScorer/mahobin/issues"
   },
-  "homepage": "https://github.com/TheUnderScorer/silio#readme",
+  "homepage": "https://github.com/TheUnderScorer/mahobin#readme",
   "dependencies": {},
   "devDependencies": {
     "@semantic-release/changelog": "6.0.1",
