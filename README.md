@@ -1,4 +1,6 @@
-# typescript-npm-package-template
+# Silio
+
+> Yet another DI library for Typescript. It's type-safe though!
 
 > Template to kickstart creating a Node.js module using TypeScript and VSCode
 
