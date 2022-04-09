@@ -15,7 +15,7 @@
 ## Install
 
 ```bash
-npm install my-package-name
+npm install mahobin
 ```
 
 ## Usage
@@ -51,8 +51,8 @@ Lorem ipsum.
 [build-url]:https://github.com/TheUnderScorer/Mahobin/actions/workflows/release.yml
 [downloads-img]:https://img.shields.io/npm/dt/typescript-npm-package-template
 [downloads-url]:https://www.npmtrends.com/typescript-npm-package-template
-[npm-img]:https://img.shields.io/npm/v/typescript-npm-package-template
-[npm-url]:https://www.npmjs.com/package/typescript-npm-package-template
+[npm-img]:https://img.shields.io/npm/v/mahobin
+[npm-url]:https://www.npmjs.com/package/mahobin
 [issues-img]:https://img.shields.io/github/issues/TheUnderScorer/Mahobin
 [issues-url]:https://github.com/TheUnderScorer/Mahobin/issues
 [codecov-img]:https://codecov.io/gh/ryansonshine/typescript-npm-package-template/branch/main/graph/badge.svg
