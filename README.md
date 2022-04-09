@@ -49,8 +49,8 @@ Lorem ipsum.
 
 [build-img]:https://github.com/TheUnderScorer/Mahobin/actions/workflows/release.yml/badge.svg
 [build-url]:https://github.com/TheUnderScorer/Mahobin/actions/workflows/release.yml
-[downloads-img]:https://img.shields.io/npm/dt/typescript-npm-package-template
-[downloads-url]:https://www.npmtrends.com/typescript-npm-package-template
+[downloads-img]:https://img.shields.io/npm/dt/mahobin
+[downloads-url]:https://www.npmtrends.com/mahobin
 [npm-img]:https://img.shields.io/npm/v/mahobin
 [npm-url]:https://www.npmjs.com/package/mahobin
 [issues-img]:https://img.shields.io/github/issues/TheUnderScorer/Mahobin
