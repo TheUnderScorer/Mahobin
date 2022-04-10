@@ -26,26 +26,9 @@ import { Container } from 'mahobin';
 const myContainer = Container.create();
 ```
 
-## API
+## Usage
 
-### myPackage(input, options?)
-
-#### input
-
-Type: `string`
-
-Lorem ipsum.
-
-#### options
-
-Type: `object`
-
-##### postfix
-
-Type: `string`
-Default: `rainbows`
-
-Lorem ipsum.
+[Read documentation](https://theunderscorer.github.io/Mahobin/)
 
 [build-img]:https://github.com/TheUnderScorer/Mahobin/actions/workflows/release.yml/badge.svg
 [build-url]:https://github.com/TheUnderScorer/Mahobin/actions/workflows/release.yml
