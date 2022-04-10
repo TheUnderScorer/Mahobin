@@ -1,6 +1,6 @@
 import { Container } from './Container';
-import { LifeTime } from './container.types';
-import { Disposable } from './common.types';
+import { LifeTime } from './types/container.types';
+import { Disposable } from './types/common.types';
 import { NoResolverFoundError } from './errors/NoResolverFound.error';
 
 const addDays = (date: Date, days: number) => {
@@ -28,7 +28,7 @@ describe('Container', () => {
     expect(container.has('now')).toBe(true);
     expect(container.has('tomorrow')).toBe(true);
 
-    expect(Object.values(container.resolvers)).toHaveLength(2);
+    expect(Object.values(container.containerResolvers)).toHaveLength(2);
   });
 
   it('should resolve items using "items" proxy', () => {
@@ -101,7 +101,7 @@ describe('Container', () => {
     await container.clear();
 
     expect(container.cache.size).toBe(0);
-    expect(container.resolvers).toEqual({});
+    expect(container.containerResolvers).toEqual({});
   });
 
   it('should store root parent', () => {

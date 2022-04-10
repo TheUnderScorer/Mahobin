@@ -1,6 +1,7 @@
-import type { Container } from './Container';
+import type { Container } from '../Container';
 
 export enum ContainerEvents {
+  // Emitted when container is disposed
   Disposed = 'disposed',
 }
 

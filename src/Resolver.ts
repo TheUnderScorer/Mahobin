@@ -2,13 +2,12 @@ import {
   ContainerOptions,
   Factory,
   LifeTime,
-  ResolverDisposer,
-  ResolverParams,
   ResolversMap,
-} from './container.types';
+} from './types/container.types';
 import { Container } from './Container';
-import { Disposable } from './common.types';
+import { Disposable } from './types/common.types';
 import { isDisposable } from './typeGuards';
+import { ResolverDisposer, ResolverParams } from './types/resolvers.types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class Resolver<T, R extends ResolversMap> implements Disposable {
