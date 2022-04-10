@@ -10,8 +10,6 @@
 [![Commitizen Friendly][commitizen-img]][commitizen-url]
 [![Semantic Release][semantic-release-img]][semantic-release-url]
 
-> My awesome module
-
 ## Install
 
 ```bash
