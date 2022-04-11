@@ -316,6 +316,14 @@ describe('Container', () => {
     expect(disposer).toHaveBeenCalledTimes(2);
   });
 
+  it('should throw when trying to access declared item', async () => {
+    const container = Container.create().declare<'id', string>('id');
+
+    expect(() => container.items.id).toThrow(
+      'Tried to resolve a resolver which was registered as a declaration: id'
+    );
+  });
+
   describe('Scoped container', () => {
     it('should resolve scoped items', async () => {
       const container = Container.create().register({
@@ -335,6 +343,22 @@ describe('Container', () => {
       expect(firstNow.valueOf()).toBe(firstScope.resolve('now').valueOf());
       await wait(50);
       expect(secondNow.valueOf()).toBe(secondScope.resolve('now').valueOf());
+    });
+
+    it('should support declaring and registering items into scoped container', async () => {
+      const container = Container.create()
+        .declare<'id', string>('id')
+        .register({
+          key: 'idAddon',
+          factory: store => store.id + '-addon',
+        });
+
+      const scope = container.createScope().register({
+        key: 'id',
+        factory: () => 'scoped-id',
+      });
+
+      expect(scope.items.idAddon).toBe('scoped-id-addon');
     });
 
     it('should not bleed transient items into parent container', async () => {
