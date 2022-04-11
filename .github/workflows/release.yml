@@ -29,4 +29,4 @@ jobs:
           HUSKY: 0
         run: npx semantic-release
       - name: Code Coverage
-        run: npm run coverage
+        run: npx codecov --token=${{ secrets.CODECOV_TOKEN }}

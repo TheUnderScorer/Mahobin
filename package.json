@@ -10,7 +10,6 @@
     "build": "tsc",
     "clean": "rm -rf ./lib/",
     "cm": "cz",
-    "coverage": "codecov",
     "lint": "eslint ./src/ --fix",
     "prepare": "husky install",
     "semantic-release": "semantic-release",
