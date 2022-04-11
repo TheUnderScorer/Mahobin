@@ -7,8 +7,11 @@ import {
   ResolversMap,
 } from './container.types';
 
+export type ResolverRecordEntry<Items extends ResolversMap = ResolversMap> =
+  Omit<ResolverParams<any, any, Items>, 'key'>;
+
 export interface ResolversRecord<Items extends ResolversMap = ResolversMap> {
-  [key: ContainerKey]: Omit<ResolverParams<any, any, Items>, 'key'>;
+  [key: ContainerKey]: ResolverRecordEntry<Items>;
 }
 
 // Disposes given item in resolver

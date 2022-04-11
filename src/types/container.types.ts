@@ -2,6 +2,8 @@
 import type { Resolver } from '../Resolver';
 import type { Container } from '../Container';
 
+export const declarationSymbol = Symbol('mahobinDeclaration');
+
 export type ContainerKey = string | symbol | number;
 
 // Creates new item in container. Receives "items" which contain all items in container.
@@ -17,6 +19,11 @@ export type ResolversMap = {
 export interface ContainerOptions {
   // Default lifetime that will be used for all resolvers
   defaultLifetime?: LifeTime;
+
+  /**
+   * When set to true, if resolver with return promise, it's resolved value will be stored in cache, otherwise the promise itself will be cached.
+   * */
+  cacheResolvedPromises?: boolean;
 }
 
 export enum LifeTime {

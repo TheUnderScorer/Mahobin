@@ -1,4 +1,5 @@
 import {
+  ContainerKey,
   ContainerOptions,
   Factory,
   LifeTime,
@@ -8,6 +9,7 @@ import { Container } from './Container';
 import { Disposable } from './types/common.types';
 import { isDisposable } from './typeGuards';
 import { ResolverDisposer, ResolverParams } from './types/resolvers.types';
+import { nilFactory } from './utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class Resolver<T, R extends ResolversMap> implements Disposable {
@@ -15,25 +17,53 @@ export class Resolver<T, R extends ResolversMap> implements Disposable {
 
   lifeTime = LifeTime.Transient;
 
+  cacheResolvedPromises = false;
+
   // Stored container used for building this registration
   container?: Container<R>;
 
   // Name of this registration
-  protected name = '';
+  protected name!: ContainerKey;
 
   protected disposed = false;
 
+  /**
+   * Indicates if current resolver was registered only as a declaration, meaning that it doesn't have an actual value yet.
+   * */
+  protected declaration = false;
+
   constructor(public readonly factory: Factory<T, R>) {}
 
-  setName(name: string) {
+  setName(name: ContainerKey) {
     this.name = name;
 
     return this;
   }
 
+  setDeclaration(declaration: boolean) {
+    this.declaration = declaration;
+
+    return this;
+  }
+
+  setCacheResolvedPromises(cache: boolean) {
+    this.cacheResolvedPromises = cache;
+
+    return this;
+  }
+
+  /**
+   * Resolves registration using given container instance.
+   * */
   resolve(container: Container<R>, useCache = true): T {
+    if (this.declaration) {
+      throw new Error(
+        `Tried to resolve a resolver which was registered as a declaration: ${this.name.toString()}`
+      );
+    }
+
     if (this.disposed) {
-      throw new Error('Registration is disposed');
+      throw new Error('Resolver is disposed');
     }
 
     if (!useCache) {
@@ -42,13 +72,13 @@ export class Resolver<T, R extends ResolversMap> implements Disposable {
 
     switch (this.lifeTime) {
       case LifeTime.Scoped: {
-        return this.buildOrRetrieveFromCache(container);
+        return this.resolveOrRetrieveFromCache(container);
       }
 
       case LifeTime.Singleton: {
         const rootContainer = container.containerRoot ?? container;
 
-        return this.buildOrRetrieveFromCache(rootContainer);
+        return this.resolveOrRetrieveFromCache(rootContainer);
       }
 
       case LifeTime.Transient:
@@ -76,6 +106,12 @@ export class Resolver<T, R extends ResolversMap> implements Disposable {
     return this;
   }
 
+  /**
+   * Disposes this resolver
+   *
+   * @param [onlyDisposeValue=false] - If true, only the value will be disposed, but the binding will remain in the
+   * container.
+   */
   async dispose(onlyDisposeValue = false) {
     if (this.container?.cache.has(this.name)) {
       const value = this.container.cache.get(this.name);
@@ -98,6 +134,9 @@ export class Resolver<T, R extends ResolversMap> implements Disposable {
     }
   }
 
+  /**
+   * Clones this resolver
+   * */
   clone() {
     const resolver = new Resolver<T, R>(this.factory);
 
@@ -108,12 +147,12 @@ export class Resolver<T, R extends ResolversMap> implements Disposable {
     return resolver;
   }
 
-  protected buildOrRetrieveFromCache(container: Container<R>) {
-    if (!container.cache.has(this.name)) {
-      this.resolveAndCache(container);
-    }
-
+  protected resolveOrRetrieveFromCache(container: Container<R>) {
     this.container = container;
+
+    if (!container.cache.has(this.name)) {
+      return this.resolveAndCache(container);
+    }
 
     return container.cache.get(this.name);
   }
@@ -123,8 +162,7 @@ export class Resolver<T, R extends ResolversMap> implements Disposable {
 
     container.cache.set(this.name, value);
 
-    // TODO Do we need to await it here?
-    if (value instanceof Promise) {
+    if (this.cacheResolvedPromises && value instanceof Promise) {
       void value.then(resolved => {
         container.cache.set(this.name, resolved);
       });
@@ -133,14 +171,25 @@ export class Resolver<T, R extends ResolversMap> implements Disposable {
     return value;
   }
 
+  static createDeclaration(key: ContainerKey, options?: ContainerOptions) {
+    return this.create(
+      {
+        key,
+        factory: nilFactory,
+      },
+      options
+    ).setDeclaration(true);
+  }
+
   static create<T, R extends ResolversMap>(
-    params: ResolverParams<string, T, R>,
+    params: ResolverParams<ContainerKey, T, R>,
     options?: ContainerOptions
   ) {
     return new this(params.factory)
       .setLifetime(
         params.lifeTime ?? options?.defaultLifetime ?? LifeTime.Transient
       )
+      .setCacheResolvedPromises(options?.cacheResolvedPromises ?? false)
       .setName(params.key)
       .disposer(params.disposer);
   }

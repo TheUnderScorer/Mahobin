@@ -282,6 +282,40 @@ describe('Container', () => {
     expect(dispose).toHaveBeenCalledTimes(2);
   });
 
+  it('should support singleton items depending on transient', async () => {
+    const disposer = jest.fn();
+
+    const container = Container.create()
+      .register({
+        key: 'id',
+        factory: () => Date.now().toString(),
+        disposer,
+      })
+      .register({
+        key: 'idAddon',
+        factory: store => `${store.id}-addon`,
+        lifeTime: LifeTime.Singleton,
+      });
+
+    const idAddon = container.items.idAddon;
+
+    await wait(10);
+
+    const firstId = container.resolve('id');
+
+    await wait(10);
+
+    const secondId = container.resolve('id');
+
+    await wait(10);
+
+    const secondIdAddon = container.items.idAddon;
+
+    expect(firstId).not.toEqual(secondId);
+    expect(idAddon).toBe(secondIdAddon);
+    expect(disposer).toHaveBeenCalledTimes(2);
+  });
+
   describe('Scoped container', () => {
     it('should resolve scoped items', async () => {
       const container = Container.create().register({
@@ -289,7 +323,6 @@ describe('Container', () => {
         factory: () => new Date(),
         lifeTime: LifeTime.Scoped,
       });
-
       const firstScope = container.createScope();
       const secondScope = container.createScope();
 

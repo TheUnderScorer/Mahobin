@@ -3,6 +3,7 @@ import { Resolver } from './Resolver';
 import {
   ContainerKey,
   ContainerOptions,
+  declarationSymbol,
   LifeTime,
   ResolversMap,
 } from './types/container.types';
@@ -20,28 +21,53 @@ import {
 export class Container<Items extends Record<string, any> = Record<string, any>>
   implements Disposable
 {
-  // Unique id for this container
+  /**
+   * Unique id for this container
+   * */
   readonly id = nanoid();
 
-  // Used to detect circular dependencies.
+  /**
+   * Used to detect circular dependencies.
+   * */
   protected resolutionStack: string[] = [];
 
-  // Stores proxy for resolved items
+  /*
+   Stores proxy for resolved items
+  */
   items: Items;
 
-  // Stores direct parent of this container
+  /*
+   Stores direct parent of this container
+  */
   protected parent?: Container<Items>;
 
-  // Stores children of this container
+  /*
+   Stores children of this container
+  */
   protected children = new Set<Container<Items>>();
 
   protected rootParent?: Container<Items>;
 
   protected resolvers: ResolversMap = {};
 
-  // Cache for resolved items
+  /*
+   Cache for resolved items
+  */
   readonly cache = new Map<keyof Items, any>();
 
+  /**
+   * Emits container related events.
+   *
+   * @example
+   * ```ts
+   * const container = Container.create();
+   *
+   * container.events.on(ContainerEvents.disposed, () => {
+   *   console.log('Container was disposed');
+   * });
+   *
+   * ```
+   * */
   readonly events = new Emittery<ContainerEventsPayload>();
 
   constructor(public readonly options: Required<ContainerOptions>) {
@@ -109,6 +135,7 @@ export class Container<Items extends Record<string, any> = Record<string, any>>
 
   /**
    * Takes a record of resolvers, and returns a container with the resolvers registered.
+   * Use to register many resolvers that don't depend on one another.
    *
    * @returns Container with extended type which contains registered resolvers.
    * @example ```ts
@@ -126,9 +153,7 @@ export class Container<Items extends Record<string, any> = Record<string, any>>
    * console.log(container.items.now); // Date
    * ```
    */
-  registerMany<T extends ResolversRecord>(
-    record: T
-  ): Container<Items & ResolvedResolversRecord<T>> {
+  registerMany<T extends ResolversRecord>(record: T) {
     const entries = Object.entries(record);
     const resolvers = entries.reduce<ResolversMap>(
       (acc, [key, resolverParams]) => {
@@ -165,13 +190,67 @@ export class Container<Items extends Record<string, any> = Record<string, any>>
    * console.log(container.items.now.toISOString()); // 2020-01-01T00:00:00.000Z
    * ```
    */
-  register<Key extends string, T>(registration: ResolverParams<Key, T, Items>) {
+  register<Key extends ContainerKey | keyof Items, T>(
+    registration: ResolverParams<
+      Key,
+      Key extends keyof Items
+        ? Items[Key] extends { [declarationSymbol]: true }
+          ? Omit<Items[Key], typeof declarationSymbol>
+          : T
+        : T,
+      Items
+    >
+  ) {
     this.resolvers[registration.key] = Resolver.create(
       registration,
       this.options
     );
 
+    if (
+      this.rootParent &&
+      (registration.lifeTime === LifeTime.Singleton ||
+        this.options.defaultLifetime === LifeTime.Singleton)
+    ) {
+      console.warn(
+        'Warning! Registered singleton in child container, it will be resolved using root container.'
+      );
+    }
+
     return this as Container<Items & Record<Key, T>>;
+  }
+
+  /**
+   * Takes a key and a type, and returns a new container type with the key and type added to it.
+   * Does not register anything, but only adds the type to the container that can be used and registered later.
+   *
+   * @returns The container itself, but with the new type added to the items.
+   * @example ```ts
+   * const container = Container
+   *  .create()
+   *  .declare<'now', Date>('now')
+   *  .register({
+   *    key: 'tomorrow',
+   *    factory: store => new Date(store.now.getTime() + 86400000),
+   *  })
+   *  .register({
+   *    key: 'now',
+   *    // Whoops! TypeScript will fail here, because the expected type is "Date"!
+   *    factory: () => 'now'
+   *  });
+   * ```
+   */
+  declare<Key extends ContainerKey, Type>(key: Key) {
+    if (this.has(key)) {
+      throw new Error(
+        `Tried to create declaration for already existing key: ${key.toString()}`
+      );
+    }
+
+    this.resolvers[key] = Resolver.createDeclaration(key);
+
+    return this as Container<
+      Items & Record<Key, Type & { [declarationSymbol]: true }>
+    >;
   }
 
   /**
@@ -293,6 +372,7 @@ export class Container<Items extends Record<string, any> = Record<string, any>>
   static create(options?: ContainerOptions) {
     return new this({
       defaultLifetime: options?.defaultLifetime ?? LifeTime.Transient,
+      cacheResolvedPromises: options?.cacheResolvedPromises ?? false,
     });
   }
 }
