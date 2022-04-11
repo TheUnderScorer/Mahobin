@@ -195,7 +195,7 @@ export class Container<Items extends Record<string, any> = Record<string, any>>
     registration: ResolverParams<
       Key,
       Key extends keyof Items
-        ? Items[Key] extends { [declarationSymbol]: true }
+        ? Items[Key] extends { [declarationSymbol]?: true }
           ? Omit<Items[Key], typeof declarationSymbol>
           : T
         : T,
@@ -250,7 +250,7 @@ export class Container<Items extends Record<string, any> = Record<string, any>>
     this.resolvers[key] = Resolver.createDeclaration(key);
 
     return this as Container<
-      Items & Record<Key, Type & { [declarationSymbol]: true }>
+      Items & Record<Key, Type & { [declarationSymbol]?: true }>
     >;
   }
 
