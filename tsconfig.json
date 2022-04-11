@@ -3,8 +3,8 @@
   "compilerOptions": {
     "strict": true,
     "outDir": "./lib",
-    "sourceMap": true,
-    "declaration": false,
+    "sourceMap": false,
+    "declaration": true,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,

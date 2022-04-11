@@ -68,7 +68,8 @@ export class Container<Items extends Record<string, any> = Record<string, any>>
    *
    * ```
    * */
-  readonly events = new Emittery<ContainerEventsPayload>();
+  readonly events: Emittery<ContainerEventsPayload> =
+    new Emittery<ContainerEventsPayload>();
 
   constructor(public readonly options: Required<ContainerOptions>) {
     this.items = this.createProxy();
