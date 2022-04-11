@@ -83,6 +83,9 @@
     "*.ts": "eslint --cache --cache-location .eslintcache --fix"
   },
   "release": {
+    "branches": [
+      "main"
+    ],
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
