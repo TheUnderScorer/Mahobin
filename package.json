@@ -1,6 +1,6 @@
 {
   "name": "mahobin",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Yet another DI library for javascript",
   "main": "./lib/src/index.js",
   "files": [
