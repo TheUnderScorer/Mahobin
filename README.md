@@ -10,6 +10,7 @@
 [![Commitizen Friendly][commitizen-img]][commitizen-url]
 [![Semantic Release][semantic-release-img]][semantic-release-url]
 
+[![Edit purple-sun-1vr9lm](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/purple-sun-1vr9lm?expanddevtools=1&fontsize=14&theme=dark)
 ## Install
 
 ```bash
