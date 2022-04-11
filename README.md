@@ -160,9 +160,9 @@ app.get('/messages', async (req, res) => {
 
 [issues-url]:https://github.com/TheUnderScorer/Mahobin/issues
 
-[codecov-img]:https://codecov.io/gh/ryansonshine/typescript-npm-package-template/branch/main/graph/badge.svg
+[codecov-img]:https://codecov.io/gh/TheUnderScorer/Mahobin/branch/main/graph/badge.svg
 
-[codecov-url]:https://codecov.io/gh/ryansonshine/typescript-npm-package-template
+[codecov-url]:https://codecov.io/gh/TheUnderScorer/Mahobin
 
 [semantic-release-img]:https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
 
