@@ -1,3 +1,11 @@
+## [1.0.3](https://github.com/TheUnderScorer/mahobin/compare/v1.0.2...v1.0.3) (2022-04-11)
+
+
+### Bug Fixes
+
+* Exclude test files from package ([0a688e5](https://github.com/TheUnderScorer/mahobin/commit/0a688e56fb483fa0f11be3952e868f0db5f75b2e))
+* Fix type issue with registering declared items ([e55dd16](https://github.com/TheUnderScorer/mahobin/commit/e55dd165892748a9f011e3c0d768a193eb64ef14))
+
 ## [1.0.2](https://github.com/TheUnderScorer/mahobin/compare/v1.0.1...v1.0.2) (2022-04-11)
 
 

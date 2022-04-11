@@ -1,6 +1,6 @@
 {
   "name": "mahobin",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Yet another DI library for javascript",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
