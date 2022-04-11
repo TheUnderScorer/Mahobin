@@ -34,10 +34,13 @@
   },
   "keywords": [
     "DI",
-    "dependcy injection",
-    "typescript",
-    "typesafe",
-    "javascript"
+    "Dependency Injection",
+    "IoC",
+    "Inversion of Control",
+    "Container",
+    "Scoped Container",
+    "TypeScript",
+    "typesafe"
   ],
   "bugs": {
     "url": "https://github.com/TheUnderScorer/mahobin/issues"
