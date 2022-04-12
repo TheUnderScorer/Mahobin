@@ -1,3 +1,11 @@
+# [1.1.0](https://github.com/TheUnderScorer/mahobin/compare/v1.0.3...v1.1.0) (2022-04-12)
+
+
+### Features
+
+* Add resolvers as second generic parameter to Container ([cf51549](https://github.com/TheUnderScorer/mahobin/commit/cf5154934e184823850943003a55e3462bfd0175))
+* Support injecting additional params when resolving ([ae23e48](https://github.com/TheUnderScorer/mahobin/commit/ae23e4805f7f37c8e226cd7e6b63db5415fcf38b))
+
 ## [1.0.3](https://github.com/TheUnderScorer/mahobin/compare/v1.0.2...v1.0.3) (2022-04-11)
 
 
