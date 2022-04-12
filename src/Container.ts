@@ -5,6 +5,7 @@ import {
   ContainerOptions,
   declarationSymbol,
   LifeTime,
+  ResolveParams,
   ResolversMap,
 } from './types/container.types';
 import { Disposable } from './types/common.types';
@@ -80,47 +81,40 @@ export class Container<
     this.items = this.createProxy();
   }
 
-  // Creates proxy for resolving container items
-  private createProxy() {
-    return new Proxy(this.resolvers, {
-      get: (target: any, p: string | symbol) => {
-        const pStr = p.toString();
+  /**
+   * Returns a proxy object that resolves the requested property from the container, or from the additionalItems object
+   * if it's provided
+   *
+   * @param [additionalItems] - Partial<Items>
+   * @returns A proxy object that has a getter that returns the resolved value of the key.
+   */
+  createProxy(additionalItems?: Partial<Items>) {
+    return new Proxy(
+      {},
+      {
+        get: (target: any, p: ContainerKey) => {
+          if (additionalItems?.[p as keyof Items]) {
+            return additionalItems[p as keyof Items];
+          }
 
-        if (this.resolutionStack.includes(pStr)) {
-          throw new Error(
-            `Circular dependency detected: ${this.resolutionStack.join(
-              ' -> '
-            )} -> ${pStr}`
+          return this.resolve(p as keyof Items);
+        },
+        // Return own keys excluding current resolution stack, in order to avoid circular dependencies
+        ownKeys: () => {
+          return Object.keys(this.resolvers).filter(
+            p => !this.resolutionStack.includes(p)
           );
-        }
-
-        this.resolutionStack.push(pStr);
-
-        this.validateKey(pStr);
-
-        const resolver = this.resolvers[p];
-
-        const result = resolver.resolve(this) as unknown;
-
-        this.resolutionStack.pop();
-
-        return result;
-      },
-      // Return own keys excluding current resolution stack, in order to avoid circular dependencies
-      ownKeys: () => {
-        return Object.keys(this.resolvers).filter(
-          p => !this.resolutionStack.includes(p)
-        );
-      },
-      getOwnPropertyDescriptor: (target: any, key: string) => {
-        return Object.getOwnPropertyDescriptor(this.resolvers, key)
-          ? {
-              enumerable: true,
-              configurable: true,
-            }
-          : undefined;
-      },
-    }) as Items;
+        },
+        getOwnPropertyDescriptor: (target: any, key: string) => {
+          return Object.getOwnPropertyDescriptor(this.resolvers, key)
+            ? {
+                enumerable: true,
+                configurable: true,
+              }
+            : undefined;
+        },
+      }
+    ) as Items;
   }
 
   get containerParent() {
@@ -281,27 +275,75 @@ export class Container<
    *
    * @returns Resolved item from container.
    * @example ```ts
-   * const container = Container.create().register({
-   *   key: 'now',
-   *   factory: () => new Date()
-   * });
+   * const container = Container
+   *   .create()
+   *   .register({
+   *     key: 'now',
+   *     factory: () => new Date(),
+   *   })
+   *   .register({
+   *     key: 'tomorrow',
+   *     factory: store => {
+   *       const tomorrow = new Date(store.now);
    *
-   * console.log(container.resolve('now').toISOString()); // 2020-01-01T00:00:00.000Z
+   *       tomorrow.setDate(tomorrow.getDate() + 1);
+   *
+   *       return tomorrow;
+   *     }
+   *   });
+   *
+   * console.log(container.resolve('tomorrow').toISOString()); // 2020-01-01T00:00:00.000Z
+   *
+   * console.log(container.resolve('tomorrow', {
+   *   injectionParams: {
+   *     // Provide custom params that will be injected while resolving item
+   *     now: new Date(),
+   *   },
+   * }).toISOString()); // 2020-01-01T00:00:00.000Z
    * ```
    */
-  resolve<Key extends keyof Items>(key: Key) {
+  resolve<Key extends keyof Items & keyof Resolvers>(
+    key: Key,
+    params?: ResolveParams<Resolvers, Key>
+  ) {
     this.validateKey(key);
 
-    return this.items[key];
+    const pStr = key.toString();
+
+    if (this.resolutionStack.includes(pStr)) {
+      throw new Error(
+        `Circular dependency detected: ${this.resolutionStack.join(
+          ' -> '
+        )} -> ${pStr}`
+      );
+    }
+
+    this.resolutionStack.push(pStr);
+
+    this.validateKey(pStr);
+
+    const resolver = this.resolvers[key];
+
+    const result = resolver.resolve(this, params);
+
+    this.resolutionStack.pop();
+
+    return result as Items[Key];
   }
 
   /**
    * Builds given resolver, but doesn't cache it, meaning that configured lifetime won't take effect here
    * */
-  build<Key extends keyof Items>(key: Key) {
+  build<Key extends keyof Items>(
+    key: Key,
+    params?: Omit<ResolveParams<Resolvers, Key>, 'omitCache'>
+  ) {
     this.validateKey(key);
 
-    return this.resolvers[key].resolve(this, false) as Items[Key];
+    return this.resolvers[key].resolve(this, {
+      ...params,
+      omitCache: true,
+    }) as Items[Key];
   }
 
   // Throws if given key does not have associated resolver

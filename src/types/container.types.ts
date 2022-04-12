@@ -60,3 +60,20 @@ export type ContainerFactoryFnContents<T> = T extends () => Promise<
   : T extends () => Container<infer R>
   ? R
   : never;
+
+export type InjectionParams<
+  Resolvers extends ResolversMap,
+  Key extends keyof Resolvers
+> = Resolvers[Key] extends Resolver<any, infer R> ? Partial<R> : never;
+
+export interface ResolveParams<
+  Resolvers extends ResolversMap,
+  Key extends keyof Resolvers
+> {
+  injectionParams?: InjectionParams<Resolvers, Key>;
+
+  /**
+   * If set to true, will omit cache and build the value once again, omitting the LifeTime option.
+   * */
+  omitCache?: boolean;
+}

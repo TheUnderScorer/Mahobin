@@ -324,6 +324,35 @@ describe('Container', () => {
     );
   });
 
+  it('should support injecting additional params when resolving', async () => {
+    const container = Container.create()
+      .register({
+        key: 'now',
+        factory: () => {
+          return new Date();
+        },
+        lifeTime: LifeTime.Singleton,
+      })
+      .register({
+        key: 'tomorrow',
+        factory: store => {
+          return addDays(store.now, 1);
+        },
+      });
+
+    const firstTomorrow = container.resolve('tomorrow');
+
+    await wait(10);
+
+    const secondTomorrow = container.resolve('tomorrow', {
+      injectionParams: {
+        now: new Date(),
+      },
+    });
+
+    expect(firstTomorrow.valueOf()).not.toEqual(secondTomorrow.valueOf());
+  });
+
   describe('Scoped container', () => {
     it('should resolve scoped items', async () => {
       const container = Container.create().register({
