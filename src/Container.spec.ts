@@ -331,6 +331,7 @@ describe('Container', () => {
         factory: () => new Date(),
         lifeTime: LifeTime.Scoped,
       });
+
       const firstScope = container.createScope();
       const secondScope = container.createScope();
 

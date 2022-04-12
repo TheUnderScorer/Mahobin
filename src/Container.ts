@@ -14,12 +14,17 @@ import { ContainerEvents, ContainerEventsPayload } from './types/events.types';
 import { NoResolverFoundError } from './errors/NoResolverFound.error';
 import {
   ResolvedResolversRecord,
+  ResolverFromParams,
   ResolverParams,
+  ResolverParamsValue,
+  ResolversFromResolversRecord,
   ResolversRecord,
 } from './types/resolvers.types';
 
-export class Container<Items extends Record<string, any> = Record<string, any>>
-  implements Disposable
+export class Container<
+  Items extends Record<string, any> = Record<string, any>,
+  Resolvers extends ResolversMap = ResolversMap
+> implements Disposable
 {
   /**
    * Unique id for this container
@@ -48,7 +53,7 @@ export class Container<Items extends Record<string, any> = Record<string, any>>
 
   protected rootParent?: Container<Items>;
 
-  protected resolvers: ResolversMap = {};
+  protected resolvers: Resolvers = {} as Resolvers;
 
   /*
    Cache for resolved items
@@ -131,7 +136,7 @@ export class Container<Items extends Record<string, any> = Record<string, any>>
   }
 
   get containerResolvers() {
-    return this.resolvers as Readonly<ResolversMap>;
+    return this.resolvers as Readonly<Resolvers>;
   }
 
   /**
@@ -154,7 +159,12 @@ export class Container<Items extends Record<string, any> = Record<string, any>>
    * console.log(container.items.now); // Date
    * ```
    */
-  registerMany<T extends ResolversRecord>(record: T) {
+  registerMany<T extends ResolversRecord>(
+    record: T
+  ): Container<
+    Items & ResolvedResolversRecord<T>,
+    Resolvers & ResolversFromResolversRecord<T>
+  > {
     const entries = Object.entries(record);
     const resolvers = entries.reduce<ResolversMap>(
       (acc, [key, resolverParams]) => {
@@ -173,7 +183,10 @@ export class Container<Items extends Record<string, any> = Record<string, any>>
 
     Object.assign(this.resolvers, resolvers);
 
-    return this as Container<Items & ResolvedResolversRecord<T>>;
+    return this as unknown as Container<
+      Items & ResolvedResolversRecord<T>,
+      Resolvers & ResolversFromResolversRecord<T>
+    >;
   }
 
   /**
@@ -192,17 +205,9 @@ export class Container<Items extends Record<string, any> = Record<string, any>>
    * ```
    */
   register<Key extends ContainerKey | keyof Items, T>(
-    registration: ResolverParams<
-      Key,
-      Key extends keyof Items
-        ? Items[Key] extends { [declarationSymbol]?: true }
-          ? Omit<Items[Key], typeof declarationSymbol>
-          : T
-        : T,
-      Items
-    >
+    registration: ResolverParams<Key, ResolverParamsValue<Key, Items, T>, Items>
   ) {
-    this.resolvers[registration.key] = Resolver.create(
+    (this.resolvers as ResolversMap)[registration.key] = Resolver.create(
       registration,
       this.options
     );
@@ -217,7 +222,16 @@ export class Container<Items extends Record<string, any> = Record<string, any>>
       );
     }
 
-    return this as Container<Items & Record<Key, T>>;
+    return this as Container<
+      Items & Record<Key, T>,
+      Resolvers &
+        Record<
+          Key,
+          ResolverFromParams<
+            ResolverParams<Key, ResolverParamsValue<Key, Items, T>, Items>
+          >
+        >
+    >;
   }
 
   /**
@@ -247,10 +261,11 @@ export class Container<Items extends Record<string, any> = Record<string, any>>
       );
     }
 
-    this.resolvers[key] = Resolver.createDeclaration(key);
+    (this.resolvers as ResolversMap)[key] = Resolver.createDeclaration(key);
 
     return this as Container<
-      Items & Record<Key, Type & { [declarationSymbol]?: true }>
+      Items & Record<Key, Type & { [declarationSymbol]?: true }>,
+      Resolvers & Record<Key, Resolver<any, any>>
     >;
   }
 
@@ -335,7 +350,7 @@ export class Container<Items extends Record<string, any> = Record<string, any>>
 
     this.events.clearListeners();
 
-    this.resolvers = {};
+    (this.resolvers as ResolversMap) = {};
   }
 
   /**
@@ -361,7 +376,7 @@ export class Container<Items extends Record<string, any> = Record<string, any>>
   async clear() {
     await this.clearCache();
 
-    this.resolvers = {};
+    (this.resolvers as ResolversMap) = {};
   }
 
   /**
