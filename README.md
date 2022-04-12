@@ -52,6 +52,13 @@ const myContainer = Container
 console.log(myContainer.resolve('tomorrow'));
 //OR
 console.log(myContainer.items.tomorrow);
+
+console.log(myContainer.resolve('tomorrow', {
+  injectionParams: {
+    // Provide custom params that will be injected while resolving item
+    now: new Date(),
+  },
+}));
 ```
 
 ### Singleton registrations

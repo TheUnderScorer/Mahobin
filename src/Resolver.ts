@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   ContainerKey,
   ContainerOptions,
   Factory,
   LifeTime,
+  ResolveParams,
   ResolversMap,
 } from './types/container.types';
 import { Container } from './Container';
@@ -55,7 +57,11 @@ export class Resolver<T, R extends ResolversMap> implements Disposable {
   /**
    * Resolves registration using given container instance.
    * */
-  resolve(container: Container<R>, useCache = true): T {
+  resolve(
+    container: Container<R>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    { omitCache = false, injectionParams }: ResolveParams<any, any> = {}
+  ): T {
     if (this.declaration) {
       throw new Error(
         `Tried to resolve a resolver which was registered as a declaration: ${this.name.toString()}`
@@ -66,8 +72,10 @@ export class Resolver<T, R extends ResolversMap> implements Disposable {
       throw new Error('Resolver is disposed');
     }
 
-    if (!useCache) {
-      return this.factory(container.items);
+    if (omitCache) {
+      return this.factory(
+        this.getContainerItems(container, { injectionParams })
+      );
     }
 
     switch (this.lifeTime) {
@@ -90,7 +98,7 @@ export class Resolver<T, R extends ResolversMap> implements Disposable {
 
         this.container = container;
 
-        return this.resolveAndCache(container);
+        return this.resolveAndCache(container, { injectionParams });
     }
   }
 
@@ -147,18 +155,33 @@ export class Resolver<T, R extends ResolversMap> implements Disposable {
     return resolver;
   }
 
-  protected resolveOrRetrieveFromCache(container: Container<R>) {
+  protected resolveOrRetrieveFromCache(
+    container: Container<R>,
+    params?: ResolveParams<any, any>
+  ) {
     this.container = container;
 
     if (!container.cache.has(this.name)) {
-      return this.resolveAndCache(container);
+      return this.resolveAndCache(container, params);
     }
 
     return container.cache.get(this.name);
   }
 
-  private resolveAndCache(container: Container<R>) {
-    const value = this.factory(container.items);
+  protected getContainerItems(
+    container: Container<R>,
+    params?: Pick<ResolveParams<any, any>, 'injectionParams'>
+  ) {
+    return params?.injectionParams
+      ? container.createProxy(params.injectionParams as R)
+      : container.items;
+  }
+
+  protected resolveAndCache(
+    container: Container<R>,
+    params?: Pick<ResolveParams<any, any>, 'injectionParams'>
+  ) {
+    const value = this.factory(this.getContainerItems(container, params));
 
     container.cache.set(this.name, value);
 
