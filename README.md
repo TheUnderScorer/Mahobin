@@ -77,8 +77,8 @@ const container = Container.create()
     lifeTime: LifeTime.Singleton,
   });
 
-const sum = container.items.idAddon;
-const secondSum = container.items.idAddon;
+const sum = container.items.sum;
+const secondSum = container.items.sum;
 
 console.log(sum === secondSum) // true
 ```
