@@ -7,7 +7,7 @@ import {
   LifeTime,
   ResolversMap,
 } from './container.types';
-import type { Resolver } from '../Resolver';
+import type { Resolver } from '../resolvers/Resolver';
 
 export type ResolverRecordEntry<Items extends ResolversMap = ResolversMap> =
   Omit<ResolverParams<any, any, Items>, 'key'>;
@@ -16,12 +16,15 @@ export interface ResolversRecord<Items extends ResolversMap = ResolversMap> {
   [key: ContainerKey]: ResolverRecordEntry<Items>;
 }
 
-export type ResolversFromResolversRecord<T extends ResolversRecord> = {
+export type ResolversFromResolversRecord<
+  T extends ResolversRecord,
+  CacheResolvedPromises extends boolean = boolean
+> = {
   [Key in keyof T]: T[Key] extends Omit<
     ResolverParams<any, infer V, infer R>,
     'key'
   >
-    ? Resolver<V, R>
+    ? Resolver<MaybeResolvedPromise<V, CacheResolvedPromises>, R>
     : never;
 };
 
@@ -59,12 +62,17 @@ export type ResolvedResolver<T> = T extends Pick<
   ResolverParams<any, infer S, any>,
   'factory'
 >
-  ? Awaited<S>
+  ? S
   : never;
 
 export type ResolvedResolversRecord<T extends ResolversRecord<any>> = {
   [Key in keyof T]: ResolvedResolver<T[Key]>;
 };
+
+export type MaybeResolvedPromise<
+  T,
+  CacheResolvedPromises extends boolean
+> = CacheResolvedPromises extends true ? Awaited<T> : T;
 
 export type ResolverParamsValue<
   Key extends ContainerKey | keyof Items,

@@ -6,12 +6,12 @@ import {
   LifeTime,
   ResolveParams,
   ResolversMap,
-} from './types/container.types';
-import { Container } from './Container';
-import { Disposable } from './types/common.types';
-import { isDisposable } from './typeGuards';
-import { ResolverDisposer, ResolverParams } from './types/resolvers.types';
-import { nilFactory } from './utils';
+} from '../types/container.types';
+import { Container } from '../Container';
+import { Disposable } from '../types/common.types';
+import { isDisposable } from '../typeGuards';
+import { ResolverDisposer, ResolverParams } from '../types/resolvers.types';
+import { nilFactory } from '../utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class Resolver<T, R extends ResolversMap> implements Disposable {
@@ -73,9 +73,7 @@ export class Resolver<T, R extends ResolversMap> implements Disposable {
     }
 
     if (omitCache) {
-      return this.factory(
-        this.getContainerItems(container, { injectionParams })
-      );
+      return this.resolveValue(container, { injectionParams });
     }
 
     switch (this.lifeTime) {
@@ -181,7 +179,7 @@ export class Resolver<T, R extends ResolversMap> implements Disposable {
     container: Container<R>,
     params?: Pick<ResolveParams<any, any>, 'injectionParams'>
   ) {
-    const value = this.factory(this.getContainerItems(container, params));
+    const value = this.resolveValue(container, params);
 
     container.cache.set(this.name, value);
 
@@ -192,6 +190,13 @@ export class Resolver<T, R extends ResolversMap> implements Disposable {
     }
 
     return value;
+  }
+
+  private resolveValue(
+    container: Container<R>,
+    params: Pick<ResolveParams<any, any>, 'injectionParams'> | undefined
+  ) {
+    return this.factory(this.getContainerItems(container, params));
   }
 
   static createDeclaration(key: ContainerKey, options?: ContainerOptions) {

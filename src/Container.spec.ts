@@ -1,5 +1,5 @@
 import { Container } from './Container';
-import { LifeTime } from './types/container.types';
+import { LifeTime, ResolversMap } from './types/container.types';
 import { Disposable } from './types/common.types';
 import { NoResolverFoundError } from './errors/NoResolverFound.error';
 
@@ -137,7 +137,9 @@ describe('Container', () => {
   it('should handle promises', async () => {
     const disposer = jest.fn(async v => expect(await v).toEqual(5));
 
-    const container = Container.create()
+    const container = Container.create({
+      cacheResolvedPromises: true,
+    })
       .register({
         key: 'promise',
         factory: async () => 5,
@@ -146,8 +148,14 @@ describe('Container', () => {
       })
       .register({
         key: 'sum',
-        factory: async store => (await store.promise) + 2,
+        factory: async store => {
+          expect(store.promise).toEqual(5);
+
+          return store.promise + 2;
+        },
       });
+
+    await container.resolve('promise');
 
     const result = await container.resolve('sum');
 

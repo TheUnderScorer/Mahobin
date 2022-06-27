@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Resolver } from './Resolver';
+import { Resolver } from './resolvers/Resolver';
 import {
   ContainerKey,
   ContainerOptions,
@@ -14,6 +14,7 @@ import Emittery from 'emittery';
 import { ContainerEvents, ContainerEventsPayload } from './types/events.types';
 import { NoResolverFoundError } from './errors/NoResolverFound.error';
 import {
+  MaybeResolvedPromise,
   ResolvedResolversRecord,
   ResolverFromParams,
   ResolverParams,
@@ -24,7 +25,8 @@ import {
 
 export class Container<
   Items extends Record<string, any> = Record<string, any>,
-  Resolvers extends ResolversMap = ResolversMap
+  Resolvers extends ResolversMap = ResolversMap,
+  CacheResolvedPromises extends boolean = boolean
 > implements Disposable
 {
   /**
@@ -179,7 +181,8 @@ export class Container<
 
     return this as unknown as Container<
       Items & ResolvedResolversRecord<T>,
-      Resolvers & ResolversFromResolversRecord<T>
+      Resolvers & ResolversFromResolversRecord<T>,
+      CacheResolvedPromises
     >;
   }
 
@@ -199,7 +202,16 @@ export class Container<
    * ```
    */
   register<Key extends ContainerKey | keyof Items, T>(
-    registration: ResolverParams<Key, ResolverParamsValue<Key, Items, T>, Items>
+    registration: ResolverParams<
+      Key,
+      ResolverParamsValue<Key, Items, T>,
+      {
+        [Key in keyof Items]: MaybeResolvedPromise<
+          Items[Key],
+          CacheResolvedPromises
+        >;
+      }
+    >
   ) {
     (this.resolvers as ResolversMap)[registration.key] = Resolver.create(
       registration,
@@ -224,7 +236,8 @@ export class Container<
           ResolverFromParams<
             ResolverParams<Key, ResolverParamsValue<Key, Items, T>, Items>
           >
-        >
+        >,
+      CacheResolvedPromises
     >;
   }
 
@@ -259,7 +272,8 @@ export class Container<
 
     return this as Container<
       Items & Record<Key, Type & { [declarationSymbol]?: true }>,
-      Resolvers & Record<Key, Resolver<any, any>>
+      Resolvers & Record<Key, Resolver<any, any>>,
+      CacheResolvedPromises
     >;
   }
 
@@ -427,8 +441,10 @@ export class Container<
    * @param {ContainerOptions} [options] - ContainerOptions
    * @returns A new instance of the class.
    */
-  static create(options?: ContainerOptions) {
-    return new this({
+  static create<CacheResolvedPromises extends boolean = false>(
+    options?: ContainerOptions<CacheResolvedPromises>
+  ) {
+    return new this<Record<string, any>, ResolversMap, CacheResolvedPromises>({
       defaultLifetime: options?.defaultLifetime ?? LifeTime.Transient,
       cacheResolvedPromises: options?.cacheResolvedPromises ?? false,
     });

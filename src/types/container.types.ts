@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { Resolver } from '../Resolver';
+import type { Resolver } from '../resolvers/Resolver';
 import type { Container } from '../Container';
 
 export const declarationSymbol = Symbol('mahobinDeclaration');
@@ -16,14 +16,16 @@ export type ResolversMap = {
   [key: ContainerKey]: Resolver<any, any>;
 };
 
-export interface ContainerOptions {
+export interface ContainerOptions<
+  CacheResolvedPromises extends boolean = boolean
+> {
   // Default lifetime that will be used for all resolvers
   defaultLifetime?: LifeTime;
 
   /**
    * When set to true, if resolver with return promise, it's resolved value will be stored in cache, otherwise the promise itself will be cached.
    * */
-  cacheResolvedPromises?: boolean;
+  cacheResolvedPromises?: CacheResolvedPromises;
 }
 
 export enum LifeTime {
