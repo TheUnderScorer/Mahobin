@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/TheUnderScorer/mahobin/compare/v1.2.0...v1.2.1) (2022-09-04)
+
+
+### Bug Fixes
+
+* **docs:** fix jsdoc typo ([2089695](https://github.com/TheUnderScorer/mahobin/commit/20896954f11df465e06166372d2eff15824e8821))
+
 # [1.2.0](https://github.com/TheUnderScorer/mahobin/compare/v1.1.0...v1.2.0) (2022-09-04)
 
 
