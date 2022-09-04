@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/TheUnderScorer/mahobin/compare/v1.1.0...v1.2.0) (2022-09-04)
+
+
+### Features
+
+* introduce "silent" dispose that only logs errors ([25d365a](https://github.com/TheUnderScorer/mahobin/commit/25d365a3204123ce9bbb2d34404a64a19e3467fb))
+
 # [1.1.0](https://github.com/TheUnderScorer/mahobin/compare/v1.0.3...v1.1.0) (2022-04-12)
 
 
