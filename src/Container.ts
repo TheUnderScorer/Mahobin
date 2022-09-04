@@ -380,13 +380,15 @@ export class Container<
 
   /**
    * Fully disposes container instance, clearing cache, removing children containers and clearing resolvers.
+   *
+   * @param [silent=false] If set to false, error won't be thrown, but only logged in the console
    * */
-  async dispose() {
+  async dispose(silent = false) {
     const children = Array.from(this.children);
 
     await Promise.all(children.map(child => child.dispose()));
 
-    await this.clearCache();
+    await this.clearCache(silent);
 
     await this.events.emit(ContainerEvents.Disposed, this);
 
@@ -397,8 +399,10 @@ export class Container<
 
   /**
    * It clears the cache of all resolvers that are not singletons
+   *
+   * @param [silent=false] If set to false, error won't be thrown, but only logged in the console
    */
-  async clearCache() {
+  async clearCache(silent = false) {
     let resolvers = Object.values(this.resolvers);
 
     if (this.parent) {
@@ -407,7 +411,13 @@ export class Container<
       );
     }
 
-    await Promise.all(resolvers.map(resolver => resolver.dispose()));
+    await Promise.all(
+      resolvers.map(resolver =>
+        resolver.dispose({
+          silent,
+        })
+      )
+    );
 
     this.cache.clear();
   }

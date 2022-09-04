@@ -13,6 +13,11 @@ import { isDisposable } from './typeGuards';
 import { ResolverDisposer, ResolverParams } from './types/resolvers.types';
 import { nilFactory } from './utils';
 
+export interface ResolverDisposeParams {
+  onlyDisposeValue?: boolean;
+  silent?: boolean;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class Resolver<T, R extends ResolversMap> implements Disposable {
   protected disposeHandler?: ResolverDisposer<T>;
@@ -91,7 +96,9 @@ export class Resolver<T, R extends ResolversMap> implements Disposable {
 
       case LifeTime.Transient:
         if (container.cache.has(this.name)) {
-          this.dispose(true).catch(console.error);
+          this.dispose({
+            onlyDisposeValue: true,
+          }).catch(console.error);
 
           this.disposed = false;
         }
@@ -118,27 +125,39 @@ export class Resolver<T, R extends ResolversMap> implements Disposable {
    * Disposes this resolver
    *
    * @param [onlyDisposeValue=false] - If true, only the value will be disposed, but the binding will remain in the
+   * @param [silent=false] - If set to false, error won't be thrown, but only logged in the console
    * container.
    */
-  async dispose(onlyDisposeValue = false) {
-    if (this.container?.cache.has(this.name)) {
-      const value = this.container.cache.get(this.name);
+  async dispose({
+    onlyDisposeValue = false,
+    silent = false,
+  }: ResolverDisposeParams = {}) {
+    try {
+      if (this.container?.cache.has(this.name)) {
+        const value = this.container.cache.get(this.name);
 
-      if (this.disposeHandler) {
-        await this.disposeHandler(value);
-      } else if (isDisposable(value)) {
-        await value.dispose();
+        if (this.disposeHandler) {
+          await this.disposeHandler(value);
+        } else if (isDisposable(value)) {
+          await value.dispose();
+        }
+
+        if (!onlyDisposeValue) {
+          this.container?.cache.delete(this.name);
+        }
       }
 
       if (!onlyDisposeValue) {
-        this.container?.cache.delete(this.name);
+        this.container = undefined;
+
+        this.disposed = true;
       }
-    }
-
-    if (!onlyDisposeValue) {
-      this.container = undefined;
-
-      this.disposed = true;
+    } catch (err) {
+      if (!silent) {
+        throw err;
+      } else {
+        console.error(err);
+      }
     }
   }
 
