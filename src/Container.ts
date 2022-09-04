@@ -381,7 +381,7 @@ export class Container<
   /**
    * Fully disposes container instance, clearing cache, removing children containers and clearing resolvers.
    *
-   * @param [silent=false] If set to false, error won't be thrown, but only logged in the console
+   * @param [silent=false] If set to true, error won't be thrown, but only logged in the console
    * */
   async dispose(silent = false) {
     const children = Array.from(this.children);
@@ -400,7 +400,7 @@ export class Container<
   /**
    * It clears the cache of all resolvers that are not singletons
    *
-   * @param [silent=false] If set to false, error won't be thrown, but only logged in the console
+   * @param [silent=false] If set to true, error won't be thrown, but only logged in the console
    */
   async clearCache(silent = false) {
     let resolvers = Object.values(this.resolvers);

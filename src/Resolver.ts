@@ -125,7 +125,7 @@ export class Resolver<T, R extends ResolversMap> implements Disposable {
    * Disposes this resolver
    *
    * @param [onlyDisposeValue=false] - If true, only the value will be disposed, but the binding will remain in the
-   * @param [silent=false] - If set to false, error won't be thrown, but only logged in the console
+   * @param [silent=false] - If set to true, error won't be thrown, but only logged in the console
    * container.
    */
   async dispose({
