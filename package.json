@@ -31,7 +31,7 @@
     "url": "https://github.com/TheUnderScorer"
   },
   "engines": {
-    "node": ">=14.0"
+    "node": ">=16.0"
   },
   "keywords": [
     "DI",
