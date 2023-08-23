@@ -9,7 +9,6 @@ import {
   ResolversMap,
 } from './types/container.types';
 import { Disposable } from './types/common.types';
-import { nanoid } from 'nanoid';
 import Emittery from 'emittery';
 import { ContainerEvents, ContainerEventsPayload } from './types/events.types';
 import { NoResolverFoundError } from './errors/NoResolverFound.error';
@@ -21,6 +20,7 @@ import {
   ResolversFromResolversRecord,
   ResolversRecord,
 } from './types/resolvers.types';
+import { nanoid } from './nanoid';
 
 export class Container<
   Items extends Record<string, any> = Record<string, any>,
