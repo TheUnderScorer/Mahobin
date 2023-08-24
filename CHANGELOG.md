@@ -1,3 +1,16 @@
+# [2.0.0](https://github.com/TheUnderScorer/mahobin/compare/v1.2.1...v2.0.0) (2023-08-24)
+
+
+### Features
+
+* add support for react-native ([719e56d](https://github.com/TheUnderScorer/mahobin/commit/719e56d9836a66adb56edd1577ef6a7a2ef2b395))
+* change minimal required node version to 16 ([56c5436](https://github.com/TheUnderScorer/mahobin/commit/56c543615a3089e9e3283b8155984edf3a94f838))
+
+
+### BREAKING CHANGES
+
+* previous minimal version was 14
+
 ## [1.2.1](https://github.com/TheUnderScorer/mahobin/compare/v1.2.0...v1.2.1) (2022-09-04)
 
 
