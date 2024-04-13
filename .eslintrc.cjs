@@ -3,8 +3,7 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'node', 'prettier'],
   parserOptions: {
-    tsconfigRootDir: __dirname,
-    project: ['./tsconfig.json'],
+    project: ['./tsconfig.lint.json'],
   },
   extends: [
     'eslint:recommended',
@@ -15,6 +14,8 @@ module.exports = {
     'plugin:prettier/recommended',
   ],
   rules: {
+    '@typescript-eslint/no-unsafe-call': 'off',
+    '@typescript-eslint/no-unsafe-member-access': 'off',
     'prettier/prettier': 'warn',
     'node/no-missing-import': 'off',
     'node/no-empty-function': 'off',

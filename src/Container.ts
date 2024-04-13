@@ -24,7 +24,7 @@ import { nanoid } from './nanoid';
 
 export class Container<
   Items extends Record<string, any> = Record<string, any>,
-  Resolvers extends ResolversMap = ResolversMap
+  Resolvers extends ResolversMap = ResolversMap,
 > implements Disposable
 {
   /**

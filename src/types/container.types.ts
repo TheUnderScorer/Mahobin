@@ -9,7 +9,7 @@ export type ContainerKey = string | symbol | number;
 // Creates new item in container. Receives "items" which contain all items in container.
 export type Factory<
   T = any,
-  R extends Record<ContainerKey, any> = Record<ContainerKey, any>
+  R extends Record<ContainerKey, any> = Record<ContainerKey, any>,
 > = (items: R) => T;
 
 export type ResolversMap = {
@@ -58,17 +58,17 @@ export type ContainerFactoryFnContents<T> = T extends () => Promise<
 >
   ? R
   : T extends () => Container<infer R>
-  ? R
-  : never;
+    ? R
+    : never;
 
 export type InjectionParams<
   Resolvers extends ResolversMap,
-  Key extends keyof Resolvers
+  Key extends keyof Resolvers,
 > = Resolvers[Key] extends Resolver<any, infer R> ? Partial<R> : never;
 
 export interface ResolveParams<
   Resolvers extends ResolversMap,
-  Key extends keyof Resolvers
+  Key extends keyof Resolvers,
 > {
   injectionParams?: InjectionParams<Resolvers, Key>;
 

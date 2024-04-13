@@ -2,7 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "strict": true,
-    "outDir": "./lib",
+    "outDir": "dist",
     "sourceMap": true,
     "declaration": true,
     "moduleResolution": "node",
@@ -18,12 +18,19 @@
     "skipLibCheck": true,
     "strictFunctionTypes": true,
     "skipDefaultLibCheck": true,
-    "resolveJsonModule": true,
-    "baseUrl": "."
+    "resolveJsonModule": true
   },
   "exclude": [
     "node_modules",
     "tmp",
-    "lib"
+    "dist"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
   ]
 }

@@ -2,6 +2,7 @@ import { Container } from './Container';
 import { LifeTime } from './types/container.types';
 import { Disposable } from './types/common.types';
 import { NoResolverFoundError } from './errors/NoResolverFound.error';
+import { describe, expect, it, vi } from 'vitest';
 
 const addDays = (date: Date, days: number) => {
   const result = new Date(date);
@@ -115,7 +116,7 @@ describe('Container', () => {
   });
 
   it('should automatically dispose disposable items', async () => {
-    const dispose = jest.fn();
+    const dispose = vi.fn();
     const disposable: Disposable = {
       dispose,
     };
@@ -135,7 +136,7 @@ describe('Container', () => {
   });
 
   it('should handle promises', async () => {
-    const disposer = jest.fn(async v => expect(await v).toEqual(5));
+    const disposer = vi.fn(async v => expect(await v).toEqual(5));
 
     const container = Container.create()
       .register({
@@ -259,7 +260,7 @@ describe('Container', () => {
   });
 
   it('should dispose registered transient items', async () => {
-    const dispose = jest.fn();
+    const dispose = vi.fn();
 
     const container = Container.create().register({
       factory: () => new Date(),
@@ -283,7 +284,7 @@ describe('Container', () => {
   });
 
   it('should support singleton items depending on transient', async () => {
-    const disposer = jest.fn();
+    const disposer = vi.fn();
 
     const container = Container.create()
       .register({
@@ -392,7 +393,7 @@ describe('Container', () => {
     });
 
     it('should not bleed transient items into parent container', async () => {
-      const transientDisposer = jest.fn();
+      const transientDisposer = vi.fn();
 
       const container = Container.create().register({
         factory: () => new Date(),
@@ -415,8 +416,8 @@ describe('Container', () => {
     });
 
     it('should not dispose parent elements', async () => {
-      const scopedDisposer = jest.fn();
-      const parentDisposer = jest.fn();
+      const scopedDisposer = vi.fn();
+      const parentDisposer = vi.fn();
 
       const container = Container.create()
         .register({
@@ -445,7 +446,7 @@ describe('Container', () => {
 
     it('should dispose scoped items', async () => {
       const disposable: Disposable = {
-        dispose: jest.fn(),
+        dispose: vi.fn(),
       };
 
       const container = Container.create().register({

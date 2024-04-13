@@ -31,7 +31,7 @@ export type ResolverDisposer<T> = (item: T) => MaybePromise<unknown>;
 export interface ResolverParams<
   Key extends ContainerKey,
   T,
-  R extends ResolversMap
+  R extends ResolversMap,
 > {
   // Resolver factory that creates given item
   factory: Factory<T, R>;
@@ -47,20 +47,13 @@ export interface ResolverParams<
   disposer?: ResolverDisposer<T>;
 }
 
-export type ResolverFromParams<T> = T extends ResolverParams<
-  any,
-  infer V,
-  infer R
->
-  ? Resolver<V, R>
-  : never;
+export type ResolverFromParams<T> =
+  T extends ResolverParams<any, infer V, infer R> ? Resolver<V, R> : never;
 
-export type ResolvedResolver<T> = T extends Pick<
-  ResolverParams<any, infer S, any>,
-  'factory'
->
-  ? Awaited<S>
-  : never;
+export type ResolvedResolver<T> =
+  T extends Pick<ResolverParams<any, infer S, any>, 'factory'>
+    ? Awaited<S>
+    : never;
 
 export type ResolvedResolversRecord<T extends ResolversRecord<any>> = {
   [Key in keyof T]: ResolvedResolver<T[Key]>;
@@ -69,7 +62,7 @@ export type ResolvedResolversRecord<T extends ResolversRecord<any>> = {
 export type ResolverParamsValue<
   Key extends ContainerKey | keyof Items,
   Items extends Record<string, any> = Record<string, any>,
-  T = any
+  T = any,
 > = Key extends keyof Items
   ? Items[Key] extends { [declarationSymbol]?: true }
     ? Omit<Items[Key], typeof declarationSymbol>
