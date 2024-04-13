@@ -2,8 +2,8 @@
   "name": "mahobin",
   "version": "2.1.0",
   "description": "Yet another DI library for javascript",
-  "main": "./lib/index.js",
-  "types": "./lib/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "type": "module",
   "exports": {
     ".": {
@@ -20,7 +20,6 @@
   ],
   "scripts": {
     "build": "vite build",
-    "clean": "rm -rf ./lib/",
     "cm": "cz",
     "lint": "eslint ./src/ --fix",
     "prepare": "husky install",
