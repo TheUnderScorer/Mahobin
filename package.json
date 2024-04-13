@@ -48,8 +48,8 @@
   },
   "homepage": "https://github.com/TheUnderScorer/mahobin#readme",
   "dependencies": {
-    "emittery": "0.10.2",
-    "nanoid": "^3.3.2"
+    "emittery": "^1.0.3",
+    "nanoid": "^5.0.7"
   },
   "devDependencies": {
     "@semantic-release/changelog": "6.0.1",
@@ -75,7 +75,7 @@
     "ts-jest": "27.1.4",
     "ts-node": "10.7.0",
     "typedoc": "^0.22.14",
-    "typescript": "4.6.3"
+    "typescript": "^5.4.5"
   },
   "config": {
     "commitizen": {
