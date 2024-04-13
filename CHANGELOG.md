@@ -1,3 +1,12 @@
+# [2.1.0](https://github.com/TheUnderScorer/mahobin/compare/v2.0.0...v2.1.0) (2024-04-13)
+
+
+### Features
+
+* add esm build ([6cda3de](https://github.com/TheUnderScorer/mahobin/commit/6cda3dedde6c6f5b4790179c4dd1e4613c1ca941))
+* make cache accept generic keys ([033a538](https://github.com/TheUnderScorer/mahobin/commit/033a53840a6e6cda82cb5167c2f5159c4cd3805e))
+* update deps ([e48ff41](https://github.com/TheUnderScorer/mahobin/commit/e48ff41b2e14ef766911ac9752c6009bdd7d0881))
+
 # [2.0.0](https://github.com/TheUnderScorer/mahobin/compare/v1.2.1...v2.0.0) (2023-08-24)
 
 
