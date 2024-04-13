@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/TheUnderScorer/mahobin/compare/v2.1.0...v2.1.1) (2024-04-13)
+
+
+### Bug Fixes
+
+* fix invalid types path ([59d74d5](https://github.com/TheUnderScorer/mahobin/commit/59d74d5d9970fbb17eadb5a55812841ef2424f80))
+
 # [2.1.0](https://github.com/TheUnderScorer/mahobin/compare/v2.0.0...v2.1.0) (2024-04-13)
 
 
