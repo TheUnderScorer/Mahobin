@@ -59,7 +59,7 @@ export class Container<
   /*
    Cache for resolved items
   */
-  readonly cache = new Map<keyof Items, any>();
+  readonly cache = new Map<string | number | symbol, any>();
 
   /**
    * Emits container related events.
